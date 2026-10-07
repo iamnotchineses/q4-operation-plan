@@ -2,8 +2,8 @@
 """TRENDMECCA 2026 4분기 운영계획 — 보고용 Streamlit 앱
 
 실행:  streamlit run app.py
-데이터: data/ 폴더에 목표매출 엑셀(파일명에 '목표')과 상품등급 엑셀(파일명에 '등급')을 넣거나,
-       사이드바에서 직접 업로드하면 됩니다.
+데이터: data/ 폴더의 목표매출 엑셀(파일명에 '목표')과 상품등급 엑셀(파일명에 '등급')을 읽습니다.
+       파일을 교체하면 됩니다.
 """
 import io
 import re
@@ -28,7 +28,9 @@ st.markdown(f"""
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 html, body, [class*="css"], .stMarkdown, .stDataFrame, button, input, textarea, select {{ font-family: {FONT} !important; }}
-#MainMenu, footer, header [data-testid="stToolbar"] {{ visibility: hidden; }}
+#MainMenu, footer {{ visibility: hidden; }}
+[data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{ visibility: visible !important; display: flex !important; z-index: 1000; }}
+[data-testid="stSidebarCollapsedControl"] button, [data-testid="stExpandSidebarButton"] {{ background: #141414; color: #fff; border-radius: 10px; }}
 .block-container {{ padding-top: 3.2rem; padding-bottom: 3rem; max-width: 1320px; }}
 section[data-testid="stSidebar"] {{ background: {INK}; }}
 section[data-testid="stSidebar"] * {{ color: #E8E8E8; }}
@@ -219,10 +221,6 @@ with st.sidebar:
     st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
     page = st.radio("목차", ["표지", "01  EC 목표매출", "02  운영방향", "03  채널 운영전략", "04  브랜드 운영전략", "05  체화재고 운영전략"],
                     label_visibility="collapsed")
-    st.markdown("<div style='height:22px'></div>", unsafe_allow_html=True)
-    with st.expander("기반 자료", expanded=False):
-        up_t = st.file_uploader("목표매출 엑셀", type=["xlsx"], key="t")
-        up_g = st.file_uploader("상품등급 엑셀", type=["xlsx"], key="g")
 
 def read_bytes(upload, keyword):
     if upload is not None:
@@ -230,13 +228,11 @@ def read_bytes(upload, keyword):
     p = find_file(keyword)
     return (p.read_bytes(), p.name) if p else (None, None)
 
-t_raw, t_name = read_bytes(up_t, "목표")
-g_raw, g_name = read_bytes(up_g, "등급")
+t_raw, t_name = read_bytes(None, "목표")
+g_raw, g_name = read_bytes(None, "등급")
 TGT = load_targets(t_raw) if t_raw else None
 GRD = load_grades(g_raw) if g_raw else None
 
-with st.sidebar:
-    st.markdown(f"<div style='color:#7A7A7A;font-size:11.5px;line-height:1.7;margin-top:6px'>목표매출 · {t_name or '없음'}<br>상품등급 · {g_name or '없음'}</div>", unsafe_allow_html=True)
 
 # ------------------------------------------------------------------ static content
 MAIN_MALLS = {  # 표시명: 목표매출 파일 몰명
@@ -341,7 +337,7 @@ if page == "표지":
 elif page.startswith("01"):
     header("01  EC 목표매출", "EC 전체 목표매출 및 진행 현황", "2026년 9월 누적 기준 · EC 전체 · 병행과 공식은 별도 집계하며 합산하지 않음")
     if not TGT:
-        st.warning("목표매출 엑셀이 없습니다. data 폴더에 넣거나 사이드바 '기반 자료'에서 올려 주세요.")
+        st.warning("목표매출 엑셀이 없습니다. data 폴더에 넣어 주세요.")
         st.stop()
     cols = st.columns(2, gap="medium")
     for i, lab in enumerate(("병행", "공식")):
@@ -412,7 +408,7 @@ elif page.startswith("02"):
     st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
     header("02-1  상품 등급 · 회전", "상품 등급 기반 회전 전략")
     if GRD is None:
-        st.warning("상품등급 엑셀이 없습니다. data 폴더에 넣거나 사이드바 '기반 자료'에서 올려 주세요.")
+        st.warning("상품등급 엑셀이 없습니다. data 폴더에 넣어 주세요.")
         st.stop()
     order = ["S", "A", "B", "C", "D", "E", "F"]
     g = GRD[GRD["등급"].isin(order)]
