@@ -421,7 +421,7 @@ elif page.startswith("02"):
         for lab, nm, keys, bc, dark, act, sub in [
             ("S·A", "핵심 상품", ["S", "A"], INK, False, "재고 우선 확보 · 정상가 판매 유지", "주력 채널 메인 구좌 우선 배정"),
             ("B·C", "중위 상품", ["B", "C"], MID, False, "행사 참여 · 노출 구좌 집중", "대형 행사·기획전 노출로 판매 속도 제고"),
-            ("D·E·F", "비인기 상품", ["D", "E", "F"], RED, True, "가격 조정 강화로 빠른 회전", "단, 체화재고·시즌아웃 재고는 가격 유지")]:
+            ("D·E·F", "비인기 상품", ["D", "E", "F"], RED, True, "가격 조정 강화로 빠른 회전", "체화재고 → 자체 클리어런스 운영<br>시즌아웃 재고 → 기존 시즌행사가 유지<br><span style='opacity:.75;font-size:12px'>기존엔 다음 시즌 대비 가격 원복(상승) → 체화재고 누적으로 시즌오프 행사가 유지</span>")]:
             n, lp, sp, mn, mx = band(keys)
             mt = f"{mx:.0f}% 이하" if lab == "D·E·F" else f"{mn:.0f}~{mx:.0f}%"
             html(f"""<div class="band {'dark' if dark else ''}"><div class="b" style="background:{bc}">{lab}</div>
