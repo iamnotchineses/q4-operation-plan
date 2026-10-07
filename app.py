@@ -31,7 +31,7 @@ html, body, [class*="css"], .stMarkdown, .stDataFrame, button, input, textarea, 
 #MainMenu, footer {{ visibility: hidden; }}
 [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{ visibility: visible !important; display: flex !important; z-index: 1000; }}
 [data-testid="stSidebarCollapsedControl"] button, [data-testid="stExpandSidebarButton"] {{ background: #141414; color: #fff; border-radius: 10px; }}
-.block-container {{ padding-top: 3.2rem; padding-bottom: 3rem; max-width: 1320px; }}
+.block-container {{ padding-top: 2.8rem; padding-bottom: 0.4rem; max-width: 1320px; }}
 section[data-testid="stSidebar"] {{ background: {INK}; }}
 section[data-testid="stSidebar"] * {{ color: #E8E8E8; }}
 section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {{ background: {INK2}; border: 1px dashed #444; }}
@@ -39,15 +39,15 @@ section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {{ col
 section[data-testid="stSidebar"] [role="radiogroup"] label {{ padding: 8px 10px; border-radius: 10px; margin-bottom: 2px; width: 100%; }}
 section[data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: {INK2}; }}
 .kicker {{ color: {RED}; font-weight: 800; font-size: 13px; letter-spacing: .14em; margin-bottom: 4px; }}
-.h1 {{ font-size: 34px; font-weight: 800; color: {INK}; letter-spacing: -.02em; line-height: 1.2; margin: 0 0 6px; }}
-.sub {{ font-size: 15px; color: {MUTED}; margin-bottom: 22px; }}
-.sec {{ font-size: 18px; font-weight: 800; color: {INK}; margin: 26px 0 12px; }}
-.card {{ background: {SOFT}; border-radius: 16px; padding: 22px 24px; height: 100%; }}
+.h1 {{ font-size: 28px; font-weight: 800; color: {INK}; letter-spacing: -.02em; line-height: 1.2; margin: 0 0 6px; }}
+.sub {{ font-size: 14px; color: {MUTED}; margin-bottom: 14px; }}
+.sec {{ font-size: 16px; font-weight: 800; color: {INK}; margin: 16px 0 8px; }}
+.card {{ background: {SOFT}; border-radius: 14px; padding: 16px 20px; height: 100%; }}
 .card.dark {{ background: {INK}; color: #fff; }}
 .pill {{ display: inline-block; padding: 4px 14px; border-radius: 999px; font-weight: 800; font-size: 13px; color: #fff; background: {INK}; }}
 .pill.red {{ background: {RED}; }}
 .pill.mid {{ background: {MID}; }}
-.big {{ font-size: 60px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin: 18px 0 14px; }}
+.big {{ font-size: 48px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin: 12px 0 10px; }}
 .big small {{ font-size: 26px; }}
 .track {{ height: 10px; border-radius: 6px; background: #DCDCDC; overflow: hidden; }}
 .dark .track {{ background: #3A3A3A; }}
@@ -60,27 +60,27 @@ section[data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: 
 .stats .v span {{ font-size: 13px; font-weight: 500; margin-left: 2px; }}
 .stats .v.r {{ color: {RED}; }}
 .dark .stats .v.r {{ color: {RED_L}; }}
-.hero {{ background: {INK}; border-radius: 22px; padding: 46px 52px; position: relative; overflow: hidden; color: #fff; }}
-.hero .q4 {{ position: absolute; right: 30px; top: -40px; font-size: 300px; font-weight: 900; color: #1F1F1F; line-height: 1; letter-spacing: -.04em; }}
-.hero .t {{ position: relative; font-size: 44px; font-weight: 800; line-height: 1.18; letter-spacing: -.02em; margin: 14px 0 18px; }}
+.hero {{ background: {INK}; border-radius: 20px; padding: 32px 44px; position: relative; overflow: hidden; color: #fff; }}
+.hero .q4 {{ position: absolute; right: 30px; top: -40px; font-size: 220px; font-weight: 900; color: #1F1F1F; line-height: 1; letter-spacing: -.04em; }}
+.hero .t {{ position: relative; font-size: 36px; font-weight: 800; line-height: 1.18; letter-spacing: -.02em; margin: 14px 0 18px; }}
 .hero .k {{ position: relative; color: {RED}; font-weight: 800; letter-spacing: .3em; font-size: 13px; }}
 .hero .s {{ position: relative; color: #B5B5B5; font-size: 15px; }}
-.agenda {{ display: flex; align-items: center; gap: 22px; background: {SOFT}; border-radius: 14px; padding: 16px 24px; margin-bottom: 10px; }}
+.agenda {{ display: flex; align-items: center; gap: 22px; background: {SOFT}; border-radius: 12px; padding: 10px 22px; margin-bottom: 7px; }}
 .agenda .n {{ color: {RED}; font-weight: 800; font-size: 22px; width: 36px; }}
 .agenda .t {{ font-weight: 800; font-size: 17px; width: 190px; }}
 .agenda .d {{ color: {MUTED}; font-size: 14px; }}
 .dir {{ display: flex; gap: 18px; align-items: flex-start; }}
-.dot {{ flex: 0 0 52px; height: 52px; border-radius: 50%; background: {RED}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; }}
-.dir .t {{ font-weight: 800; font-size: 18px; margin-bottom: 6px; }}
+.dot {{ flex: 0 0 44px; height: 44px; border-radius: 50%; background: {RED}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; }}
+.dir .t {{ font-weight: 800; font-size: 16px; margin-bottom: 6px; }}
 .dir .d {{ color: {MUTED}; font-size: 14px; line-height: 1.6; }}
 .num {{ float: right; color: #C9C9C9; font-weight: 800; font-size: 26px; }}
-.steps {{ display: flex; gap: 10px; align-items: center; margin: 4px 0 18px; }}
-.step {{ flex: 1; background: {SOFT}; border-radius: 999px; padding: 11px 18px; font-weight: 800; font-size: 14px; }}
+.steps {{ display: flex; gap: 10px; align-items: center; margin: 0 0 12px; }}
+.step {{ flex: 1; background: {SOFT}; border-radius: 999px; padding: 8px 16px; font-weight: 800; font-size: 14px; }}
 .step b {{ color: {RED}; margin-right: 8px; }}
 .step.on {{ background: {INK}; color: #fff; }}
 .step.on b {{ color: {RED_L}; }}
 .chev {{ color: {MID}; font-weight: 800; }}
-.band {{ display: flex; align-items: center; gap: 18px; background: {SOFT}; border-radius: 16px; padding: 18px 22px; margin-bottom: 12px; }}
+.band {{ display: flex; align-items: center; gap: 18px; background: {SOFT}; border-radius: 14px; padding: 12px 20px; margin-bottom: 9px; }}
 .band.dark {{ background: {INK}; color: #fff; }}
 .band .b {{ flex: 0 0 84px; text-align: center; padding: 10px 0; border-radius: 999px; color: #fff; font-weight: 800; font-size: 16px; }}
 .band .m {{ flex: 0 0 190px; }}
@@ -106,15 +106,15 @@ section[data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: 
 .pair .q {{ flex: 1.05; font-weight: 800; }}
 .mall .ev {{ flex: 0 0 210px; background: #fff; border-radius: 10px; padding: 12px 14px; font-size: 12.5px; display: flex; flex-direction: column; justify-content: center; gap: 4px; }}
 .mall .ev span {{ color: {MUTED}; margin-left: 6px; }}
-.chip {{ display: inline-block; padding: 6px 14px; border-radius: 999px; border: 1px solid {LINE}; background: #fff; margin: 0 6px 8px 0; font-size: 13px; }}
+.chip {{ display: inline-block; padding: 5px 12px; border-radius: 999px; border: 1px solid {LINE}; background: #fff; margin: 0 5px 6px 0; font-size: 12.5px; }}
 .dark .chip {{ background: #333; border-color: #333; color: #fff; }}
-.mini {{ font-size: 12px; color: {MUTED}; font-weight: 700; margin: 14px 0 8px; }}
+.mini {{ font-size: 12px; color: {MUTED}; font-weight: 700; margin: 10px 0 6px; }}
 .dark .mini {{ color: #A8A8A8; }}
 .foc {{ font-weight: 800; font-size: 14.5px; line-height: 1.8; }}
-.month {{ font-size: 36px; font-weight: 800; }}
+.month {{ font-size: 30px; font-weight: 800; }}
 .month.r {{ color: {RED}; }}
 .tag {{ color: {MUTED}; font-weight: 700; margin-left: 10px; font-size: 14px; }}
-.ul {{ margin: 10px 0 16px 0; padding-left: 18px; font-size: 14.5px; line-height: 1.8; }}
+.ul {{ margin: 6px 0 10px 0; padding-left: 18px; font-size: 14px; line-height: 1.7; }}
 .done {{ border-radius: 14px; padding: 16px 20px; background: {SOFT}; font-weight: 800; font-size: 14px; line-height: 1.9; }}
 .done.dark {{ background: {INK}; color: #fff; }}
 .done .h {{ color: {RED}; font-size: 12px; }}
@@ -381,7 +381,7 @@ elif page.startswith("01"):
     fig.add_bar(x=[f"{m}월" for m in ms], y=[tgt[i] if ms[i] >= 10 else 0 for i in range(12)], name="4분기 목표",
                 marker_color=RED, text=[f"{tgt[i]:.1f}" if ms[i] >= 10 else "" for i in range(12)], textposition="outside")
     fig.add_scatter(x=[f"{m}월" for m in ms], y=tgt, name="월 목표", mode="lines+markers", line=dict(color=MID, width=2, dash="dot"))
-    plot_layout(fig, 380, barmode="overlay", showlegend=True, legend=dict(orientation="h", y=1.1, x=0))
+    plot_layout(fig, 300, barmode="overlay", showlegend=True, legend=dict(orientation="h", y=1.1, x=0))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     html(f'<div class="note">출처: {t_name} · 누적매출은 파일의 누적매출 열 기준</div>')
@@ -392,15 +392,13 @@ elif page.startswith("02"):
              ("🏪", "신규 채널 확대", "Npay 복지몰(비즈마켓) · 해외몰 입점 확대<br>등급별 재고의 추가 판로 확보"),
              ("🎁", "폐쇄몰 공식브랜드 특가운영", "자체 패밀리세일로<br>공식브랜드 특가 운영"),
              ("🤖", "업무 자동화", "반복 업무 자동화로<br>AMD 인력을 MD 업무에 투입")]
-    for row in (items[:2], items[2:]):
-        cs = st.columns(2, gap="medium")
-        for c, (ic, t, d) in zip(cs, row):
-            n = items.index((ic, t, d)) + 1
-            with c:
-                html(f'<div class="card" style="margin-bottom:16px"><span class="num">0{n}</span><div class="dir"><div class="dot">{ic}</div><div><div class="t">{t}</div><div class="d">{d}</div></div></div></div>')
-
-    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
-    header("02-1  상품 등급 · 회전", "상품 등급 기반 회전 전략")
+    cs = st.columns(4, gap="small")
+    for n, (c, (ic, t, d)) in enumerate(zip(cs, items), start=1):
+        with c:
+            html(f'<div class="card" style="height:160px"><span class="num" style="font-size:20px">0{n}</span><div class="dot" style="width:40px;height:40px;font-size:19px">{ic}</div>'
+                 f'<div class="dir" style="display:block;margin-top:10px"><div class="t" style="font-size:15px">{t}</div><div class="d" style="font-size:12.5px;line-height:1.55">{d}</div></div></div>')
+    st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+    html('<div style="display:flex;align-items:baseline;gap:12px;margin:2px 0 4px"><span class="kicker" style="margin:0">02-1  상품 등급 · 회전</span><span style="font-size:20px;font-weight:800">상품 등급 기반 회전 전략</span></div>')
     if GRD is None:
         st.warning("상품등급 엑셀이 없습니다. data 폴더에 넣어 주세요.")
         st.stop()
@@ -409,7 +407,7 @@ elif page.startswith("02"):
     agg = g.groupby("등급").agg(lines=("라인명", "count"), sales=("매출", "sum"), margin=("이익율(%)", "median")).reindex(order)
     total = int(agg["lines"].sum())
     agg["share"] = agg["sales"] / agg["sales"].sum() * 100
-    html(f'<div class="sub">상품등급 기준 · {total:,}개 라인 · {g["브랜드"].nunique()}개 브랜드 · S~F 7단계 등급을 상품 회전 전략에 반영</div>')
+    html(f'<div class="sub" style="margin-bottom:8px;font-size:13px">상품등급 기준 · {total:,}개 라인 · {g["브랜드"].nunique()}개 브랜드 · S~F 7단계 등급을 상품 회전 전략에 반영</div>')
     html('<div class="steps">' + '<span class="chev">›</span>'.join(
         f'<div class="step {"on" if i == 0 else ""}"><b>0{i + 1}</b>{s}</div>' for i, s in
         enumerate(["상품 등급 산정 (S~F)", "등급별 회전 전략 수립", "행사·노출 / 가격 조정 반영", "판매 결과로 등급 갱신"])) + '</div>')
@@ -421,7 +419,7 @@ elif page.startswith("02"):
                                text=[f"{int(v):,}" for v in agg["lines"]], textposition="outside",
                                customdata=agg[["share", "margin"]].values,
                                hovertemplate="%{x}등급<br>라인 %{y:,}개<br>매출 비중 %{customdata[0]:.1f}%<br>이익율 중앙값 %{customdata[1]:.1f}%<extra></extra>"))
-        plot_layout(fig, 400, title=dict(text="등급별 라인 수", font=dict(size=15)))
+        plot_layout(fig, 290, title=dict(text="등급별 라인 수", font=dict(size=15)))
         fig.update_yaxes(visible=False)
         fig.update_xaxes(tickfont=dict(size=15))
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
@@ -446,11 +444,12 @@ elif page.startswith("03"):
     header("03  채널 운영전략", "채널 운영전략", "주요 15개 몰 — 종합몰 · 폐쇄몰 · 패션 플랫폼별 행사일정 · 주력브랜드 정리")
     cs = st.columns(3, gap="medium")
     for i, (gname, (malls, focus, ic)) in enumerate(GROUPS.items()):
-        dark = i == 0
+        dark = True
         with cs[i]:
-            html(f"""<div class="card {'dark' if dark else ''}"><div style="display:flex;gap:12px;align-items:center"><div class="dot" style="flex:0 0 46px;height:46px">{ic}</div>
-<div style="font-size:22px;font-weight:800">{gname}</div></div><div class="mini">주요 채널</div>{''.join(f'<span class="chip">{m}</span>' for m in malls)}
-<div class="mini">4분기 집중 방향</div><div class="foc">{'<br>'.join('▪ ' + f for f in focus)}</div></div>""")
+            html(f"""<div class="card {'dark' if dark else ''}" style="height:284px;display:flex;flex-direction:column;box-sizing:border-box"><div style="display:flex;gap:12px;align-items:center"><div class="dot" style="flex:0 0 46px;height:46px">{ic}</div>
+<div style="font-size:22px;font-weight:800">{gname}</div></div><div class="mini">주요 채널</div><div>{''.join(f'<span class="chip">{m}</span>' for m in malls)}</div>
+<div style="margin-top:auto"><div class="mini">4분기 집중 방향</div><div class="foc" style="min-height:66px;font-size:13.5px;line-height:1.65">{'<br>'.join('▪ ' + f for f in focus)}</div></div></div>""")
+    st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
 
     tabs = st.tabs(["📅 행사 캘린더", "🏬 종합몰", "🔒 폐쇄몰", "👕 패션 플랫폼", "🗓 10~12월 운영"])
     with tabs[0]:
@@ -482,7 +481,7 @@ elif page.startswith("03"):
                                  marker_color=gcol[r["그룹"]], text=[r["행사"]], textposition="inside", insidetextanchor="middle",
                                  textfont=dict(color="#fff", size=12),
                                  hovertemplate=f"{r['몰']} · {r['행사']}<br>{r['시작']:%m/%d} ~ {r['종료']:%m/%d}<extra></extra>"))
-        plot_layout(fig, 70 + 44 * len(order_m), barmode="overlay")
+        plot_layout(fig, 46 + 26 * len(order_m), barmode="overlay")
         fig.update_xaxes(type="date", range=["2026-09-26", "2027-01-03"], dtick="M1", tickformat="%m월", showgrid=True, gridcolor="#EAEAEA", side="top")
         fig.update_yaxes(categoryorder="array", categoryarray=order_m[::-1], showgrid=False)
         fig.add_vline(x=pd.Timestamp("2026-10-07").value / 1e6, line_color=RED, line_dash="dot")
@@ -534,7 +533,7 @@ elif page.startswith("04"):
         fig = go.Figure(go.Bar(x=br["재고액(억)"][::-1], y=br["브랜드"][::-1], orientation="h", marker_color=RED,
                                text=[f"{v:.2f}" for v in br["재고액(억)"][::-1]], textposition="outside", cliponaxis=False))
         fig.update_xaxes(range=[0, br["재고액(억)"].max() * 1.15])
-        plot_layout(fig, 460, title=dict(text="브랜드별 재고액 (억 원)", font=dict(size=14)))
+        plot_layout(fig, 400, title=dict(text="브랜드별 재고액 (억 원)", font=dict(size=14)))
         fig.update_xaxes(visible=False)
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
     with r:
@@ -544,12 +543,12 @@ elif page.startswith("04"):
                                     "당월 매출(만원)": st.column_config.NumberColumn(format="%,d", width=115),
                                     "우선 실행 방향": st.column_config.TextColumn(width=400)})
         if GRD is not None:
-            html('<div class="mini">브랜드별 등급 분포 (상품등급 기준)</div>')
+            exp = st.expander("브랜드별 등급 분포 (상품등급 기준)", expanded=False)
             sub = GRD[GRD["브랜드"].isin(br["브랜드"])]
             if len(sub):
                 pv = sub.pivot_table(index="브랜드", columns="등급", values="라인명", aggfunc="count", fill_value=0)
                 pv = pv.reindex(columns=[c for c in ["S", "A", "B", "C", "D", "E", "F"] if c in pv.columns])
-                st.dataframe(pv.reindex([b for b in br["브랜드"] if b in pv.index]), use_container_width=True)
+                exp.dataframe(pv.reindex([b for b in br["브랜드"] if b in pv.index]), use_container_width=True)
             else:
                 st.caption("상품등급 파일에서 해당 브랜드명을 찾지 못했습니다.")
 
@@ -562,7 +561,7 @@ else:
     cs = st.columns(4, gap="medium")
     for i, (c, (ic, t, tg, plan)) in enumerate(zip(cs, cards)):
         with c:
-            html(f"""<div class="card" style="min-height:430px;display:flex;flex-direction:column"><div class="dot" style="width:52px;background:{RED if i == 0 else INK}">{ic}</div>
+            html(f"""<div class="card" style="height:430px;display:flex;flex-direction:column"><div class="dot" style="width:52px;background:{RED if i == 0 else INK}">{ic}</div>
 <div style="font-size:19px;font-weight:800;margin:16px 0 12px">{t}</div><div class="mini">대상 브랜드 / 상품</div><div style="font-size:14px;line-height:1.7">{tg}</div>
-<div style="background:#fff;border-radius:12px;padding:14px 16px;margin-top:auto;min-height:150px"><div style="color:{RED};font-weight:800;font-size:12px;margin-bottom:6px">실행 계획</div>
+<div style="background:#fff;border-radius:12px;padding:14px 16px;margin-top:auto;height:165px;box-sizing:border-box"><div style="color:{RED};font-weight:800;font-size:12px;margin-bottom:6px">실행 계획</div>
 <div style="font-weight:800;font-size:13.5px;line-height:1.9">{'<br>'.join('▪ ' + p for p in plan)}</div></div></div>""")
