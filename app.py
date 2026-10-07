@@ -13,6 +13,7 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+import streamlit.components.v1 as components
 from openpyxl import load_workbook
 
 BASE = Path(__file__).parent
@@ -31,7 +32,14 @@ html, body, [class*="css"], .stMarkdown, .stDataFrame, button, input, textarea, 
 #MainMenu, footer {{ visibility: hidden; }}
 [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{ visibility: visible !important; display: flex !important; z-index: 1000; }}
 [data-testid="stSidebarCollapsedControl"] button, [data-testid="stExpandSidebarButton"] {{ background: #141414; color: #fff; border-radius: 10px; }}
-.block-container {{ padding-top: 2.8rem; padding-bottom: 0.4rem; max-width: 1320px; }}
+.block-container {{ padding-top: 0; padding-bottom: 0; max-width: 1320px; }}
+[data-testid="stMain"] {{ scroll-behavior: smooth; }}
+div[class*="st-key-sec"] {{ min-height: 100vh; padding-top: 2.6rem; padding-bottom: 1rem; box-sizing: border-box; }}
+.anchor {{ position: relative; top: -2.6rem; height: 0; }}
+.toc a {{ display: block; padding: 9px 12px; margin-bottom: 4px; border-radius: 10px; color: #E8E8E8 !important; text-decoration: none !important; font-size: 14px; }}
+.toc a:hover {{ background: {INK2}; }}
+.toc a:before {{ content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: {RED}; margin-right: 10px; vertical-align: middle; }}
+.toc-tip {{ color: #6E6E6E; font-size: 11.5px; line-height: 1.6; margin-top: 18px; padding-left: 12px; }}
 section[data-testid="stSidebar"] {{ background: {INK}; }}
 section[data-testid="stSidebar"] * {{ color: #E8E8E8; }}
 section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {{ background: {INK2}; border: 1px dashed #444; }}
@@ -219,8 +227,41 @@ with st.sidebar:
     st.image(str(BASE / "assets" / "logo_w.png"), width=170)
     st.markdown("<div style='height:6px'></div><div style='color:#8C8C8C;font-size:12px;letter-spacing:.12em'>2026 Q4 OPERATION PLAN</div>", unsafe_allow_html=True)
     st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
-    page = st.radio("목차", ["표지", "01  EC 목표매출", "02  운영방향", "03  채널 운영전략", "04  브랜드 운영전략", "05  체화재고 운영전략"],
-                    label_visibility="collapsed")
+    NAV = [("sec0", "표지"), ("sec1", "01  EC 목표매출"), ("sec2", "02  운영방향"), ("sec3", "03  채널 운영전략"),
+           ("sec4", "04  브랜드 운영전략"), ("sec5", "05  체화재고 운영전략")]
+    st.markdown('<nav class="toc">' + "".join(f'<a href="#{k}" target="_self">{v}</a>' for k, v in NAV) + "</nav>"
+                + "<div class='toc-tip'>마우스 휠로 넘기면<br>다음 목차로 이동합니다</div>", unsafe_allow_html=True)
+    # 휠 한 번 = 다음/이전 목차 (섹션이 화면보다 길면 그 안에서는 일반 스크롤)
+    components.html("""<script>
+const doc = window.parent.document;
+function setup() {
+  const main = doc.querySelector('[data-testid="stMain"]');
+  if (!main) { setTimeout(setup, 300); return; }
+  if (main.dataset.pager === "1") return;
+  main.dataset.pager = "1";
+  let busyUntil = 0, lastWheel = 0;
+  main.addEventListener("wheel", (e) => {
+    if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    const secs = [...doc.querySelectorAll('div[class*="st-key-sec"]')];
+    if (!secs.length) return;
+    const mt = main.getBoundingClientRect().top, vh = main.clientHeight;
+    let cur = 0;
+    secs.forEach((el, i) => { if (el.getBoundingClientRect().top - mt <= 40) cur = i; });
+    const r = secs[cur].getBoundingClientRect();
+    if (e.deltaY > 0 && r.bottom - mt > vh + 40) return;
+    if (e.deltaY < 0 && r.top - mt < -40) return;
+    e.preventDefault();
+    const now = Date.now(), quiet = now - lastWheel > 220;
+    lastWheel = now;
+    if (now < busyUntil || (!quiet && now < busyUntil + 400)) return;
+    const next = Math.min(secs.length - 1, Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)));
+    if (next === cur) return;
+    busyUntil = now + 750;
+    main.scrollTo({ top: main.scrollTop + secs[next].getBoundingClientRect().top - mt, behavior: "smooth" });
+  }, { passive: false });
+}
+setup();
+</script>""", height=0)
 
 def read_bytes(upload, keyword):
     if upload is not None:
@@ -322,7 +363,8 @@ BRAND_SHORT = {  # 브랜드 엑셀 '4분기 브랜드 운영 전략 코멘트' 
 
 
 # ------------------------------------------------------------------ pages
-if page == "표지":
+with st.container(key="sec0"):
+    html('<div id="sec0" class="anchor"></div>')
     html("""
 <div class="hero">
 <div class="q4">Q4</div>
@@ -345,7 +387,8 @@ if page == "표지":
                     ("04", "브랜드 운영전략", "재고액순"), ("05", "체화재고 운영전략", "입고일순")]:
         html(f'<div class="agenda"><div class="n">{n}</div><div class="t">{t}</div><div class="d">{d}</div></div>')
 
-elif page.startswith("01"):
+with st.container(key="sec1"):
+    html('<div id="sec1" class="anchor"></div>')
     header("01  EC 목표매출", "EC 전체 목표매출 및 진행 현황", "2026년 9월 누적 기준 · EC 전체 · 병행과 공식은 별도 집계하며 합산하지 않음")
     if not TGT:
         st.warning("목표매출 엑셀이 없습니다. data 폴더에 넣어 주세요.")
@@ -386,7 +429,8 @@ elif page.startswith("01"):
 
     html(f'<div class="note">출처: {t_name} · 누적매출은 파일의 누적매출 열 기준</div>')
 
-elif page.startswith("02"):
+with st.container(key="sec2"):
+    html('<div id="sec2" class="anchor"></div>')
     header("02  운영방향", "운영방향", "등급 기반 상품 회전 · 신규 채널 확대 · 폐쇄몰 특가 · 업무 자동화")
     items = [("🏅", "등급 기반 상품 회전 관리", "자체등급 산정 후 상품 회전에 반영<br>B·C 행사·노출 집중 / D·E·F 가격 조정 강화"),
              ("🏪", "신규 채널 확대", "Npay 복지몰(비즈마켓) · 해외몰 입점 확대<br>등급별 재고의 추가 판로 확보"),
@@ -440,7 +484,8 @@ elif page.startswith("02"):
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", type="primary", use_container_width=True)
 
 
-elif page.startswith("03"):
+with st.container(key="sec3"):
+    html('<div id="sec3" class="anchor"></div>')
     header("03  채널 운영전략", "채널 운영전략", "주요 15개 몰 — 종합몰 · 폐쇄몰 · 패션 플랫폼별 행사일정 · 주력브랜드 정리")
     cs = st.columns(3, gap="medium")
     for i, (gname, (malls, focus, ic)) in enumerate(GROUPS.items()):
@@ -514,7 +559,8 @@ elif page.startswith("03"):
 <div class="mini">주요 운영</div><ul class="ul">{''.join(f'<li>{o}</li>' for o in ops)}</ul>
 <div class="done {'dark' if i == 1 else ''}"><div class="h">완료 기준</div>{'<br>'.join('✓ ' + d for d in done)}</div>""")
 
-elif page.startswith("04"):
+with st.container(key="sec4"):
+    html('<div id="sec4" class="anchor"></div>')
     hl, hr = st.columns([7.5, 2.5], vertical_alignment="center")
     with hl:
         header("04  브랜드 운영전략", "브랜드 운영전략 (재고액순)", "재고액 TOP 10 · 재고액과 당월 매출을 함께 검토해 판매 기회 확보")
@@ -552,7 +598,8 @@ elif page.startswith("04"):
             else:
                 st.caption("상품등급 파일에서 해당 브랜드명을 찾지 못했습니다.")
 
-else:
+with st.container(key="sec5"):
+    html('<div id="sec5" class="anchor"></div>')
     header("05  체화재고 운영전략", "체화재고 운영전략 (입고일순)", "FW 장기 재고와 시즌이 지난 상품을 별도 운영")
     cards = [("❄️", "FW 장기 재고", "톰브라운, 제이린드버그<br>텐씨, ADD, 에르노, 피레넥스 등", ["10월 상품 선정", "11월 집중 행사", "12월 잔여 사이즈별 후속 제안"]),
              ("👜", "잡화 과재고", "지방시 스카프<br>마르니·마르지엘라·발렌티노 잡화", ["단품 행사 구좌 확보", "지방시 스카프 10~11월 집중", "지속적 납품 제안 (쿠팡·아이몰 등)"]),
