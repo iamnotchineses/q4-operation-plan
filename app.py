@@ -309,7 +309,7 @@ CH = {
     "롯데쇼핑m몰": (["라코스테, 구찌·CP컴퍼니·BARBOUR", "AMI·톰브라운·GANNI 등"], ["판매추이에 따른 쿠폰율 조정", "10~12월 비정기 기획전 추진"],
                 [("비정기 기획전", "10~12월")]),
     "포이즌": (["폴로·BARBOUR·캠퍼", "클락스·노다·킨·어그"], ["주력 브랜드 상품 매핑 및 가격 점검", "잔여 부진 재고 소진"], []),
-    "무신사 & 29cm": (["디젤, 티켓투더문", "파슬·아르마니"], ["디젤 익스클루시브 유지 및 무진장 추진", "티켓투더문 물량·노출구좌 확보"], [("무진장", "11월"), ("이구데이(29cm)", "")]),
+    "무신사 & 29cm": (["디젤, 티켓투더문", "파슬·아르마니"], ["디젤 익스클루시브 유지 및 무진장 추진", "티켓투더문 물량·노출구좌 확보"], [("무진장", "11/22~12/2"), ("이구데이(29cm)", "")]),
     "크림": (["RAB·노다·CEP·씨엘르", "CP컴퍼니·스톤아일랜드·보테가베네타"], ["스포츠 연합전 지속 제안", "인기 브랜드 가격·판매 반응 점검"], [("스포츠 연합전", "상시")]),
     "W컨셉": (["테클라·로이텀", "가니·리던·와일드동키·아페쎄·바버·파라부트", "파슬·비비안웨스트우드·아르마니"],
                 ["리빙 행사 참여 및 연합전 노출", "프리미엄샵·더블유위크 매월 행사 참여", "월 2회 공식브랜드 기획전 진행"],
@@ -532,7 +532,8 @@ with st.container(key="sec3"):
                                  hovertemplate=f"{r['몰']} · {r['행사']}<br>{r['시작']:%m/%d} ~ {r['종료']:%m/%d}<extra></extra>"))
         plot_layout(fig, 46 + 26 * len(order_m), barmode="overlay")
         fig.update_xaxes(type="date", range=["2026-09-26", "2027-01-03"], dtick="M1", tickformat="%m월", showgrid=True, gridcolor="#EAEAEA", side="top")
-        fig.update_yaxes(categoryorder="array", categoryarray=order_m[::-1], showgrid=False)
+        fig.update_yaxes(categoryorder="array", categoryarray=order_m[::-1], showgrid=False,
+                         tickvals=order_m, ticktext=[y if y == y.rstrip() else "" for y in order_m])
         fig.add_vline(x=pd.Timestamp("2026-10-07").value / 1e6, line_color=RED, line_dash="dot")
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
         html('<div class="note">■ 종합몰 · <span style="color:#6E6E6E">■</span> 폐쇄몰 · <span style="color:#C8102E">■</span> 패션 플랫폼 · 빨간 점선 = 오늘 · 날짜가 정해진 행사만 표시 (상시·월별 행사는 채널 탭 참고)</div>')
