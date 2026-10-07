@@ -232,6 +232,8 @@ t_raw, t_name = read_bytes(None, "목표")
 g_raw, g_name = read_bytes(None, "등급")
 TGT = load_targets(t_raw) if t_raw else None
 GRD = load_grades(g_raw) if g_raw else None
+b_raw, b_name = read_bytes(None, "브랜드")
+BRD = pd.read_excel(io.BytesIO(b_raw)) if b_raw else None
 
 
 # ------------------------------------------------------------------ static content
@@ -308,6 +310,15 @@ def mall_rates(display):
             r = row.iloc[0]
             parts.append(f"{lab} <b>{r['누적'] / r['목표'] * 100:.0f}%</b>")
     return " · ".join(parts)
+
+
+BRAND_SHORT = {  # 브랜드 엑셀 '4분기 브랜드 운영 전략 코멘트' 요약 (없는 브랜드는 원문 표시)
+    "AMI": "전 채널 주력 운영 · 단품 구좌 확보", "구찌": "스카프 중심 폐쇄몰 적극 운영",
+    "비비안웨스트우드": "지그재그·에이블리 메인 · 시계 자체 블프", "페라가모": "신세계몰 메인 브랜드 운영",
+    "헬렌카민스키": "4분기 역시즌 특가 운영", "라코스테": "시즌오프 전 M몰·이지웰·삼성카드 가격 대응",
+    "GANNI": "주요 채널 집중 · SS 과재고 역시즌 특가", "메종마르지엘라": "전 채널 주력 · 부진 잡화 제안",
+    "아페쎄": "지그재그·에이블리 가격 경쟁 운영", "아르마니": "쿠팡 배너·와우데이 · 카톡 균일가 행사",
+}
 
 
 # ------------------------------------------------------------------ pages
@@ -505,23 +516,27 @@ elif page.startswith("03"):
 <div class="done {'dark' if i == 1 else ''}"><div class="h">완료 기준</div>{'<br>'.join('✓ ' + d for d in done)}</div>""")
 
 elif page.startswith("04"):
-    header("04  브랜드 운영전략", "브랜드 운영전략 (재고액순)", "재고액과 당월 매출을 함께 검토해 판매 기회 확보")
-    br = pd.DataFrame([("헬렌카민스키", 6.63, 1131, "역시즌 특가 별도 제안"), ("바네사브루노", 4.96, 1108, "대표 상품 선정 후 행사 제안"),
-                       ("제이린드버그", 4.20, 2824, "삼성카드·포이즌·롯백 FW 소진"), ("RAB", 3.32, 1912, "크림/포이즌에서 상품별 판매 확대"),
-                       ("마르니", 2.43, 245, "부진 잡화 단품 구좌 제안"), ("ADD", 1.26, 0, "등록·판매 상태 확인 후 겨울 행사")],
-                      columns=["브랜드", "재고액(억)", "당월 매출(만원)", "우선 실행 방향"])
+    header("04  브랜드 운영전략", "브랜드 운영전략 (재고액순)", "재고액 TOP 10 · 재고액과 당월 매출을 함께 검토해 판매 기회 확보")
+    if BRD is None:
+        st.warning("브랜드 재고 엑셀이 없습니다. data 폴더에 파일명에 '브랜드'가 들어간 엑셀을 넣어 주세요.")
+        st.stop()
+    top = BRD.sort_values("재고액", ascending=False).head(10)
+    br = pd.DataFrame({"브랜드": top["브랜드"], "재고액(억)": top["재고액"] / 1e8, "당월 매출(만원)": (top["당월 매출"] / 1e4).round().astype(int),
+                       "우선 실행 방향": [BRAND_SHORT.get(b, c) for b, c in zip(top["브랜드"], top["4분기 브랜드 운영 전략 코멘트"])]})
     l, r = st.columns([5, 7], gap="medium")
     with l:
         fig = go.Figure(go.Bar(x=br["재고액(억)"][::-1], y=br["브랜드"][::-1], orientation="h", marker_color=RED,
                                text=[f"{v:.2f}" for v in br["재고액(억)"][::-1]], textposition="outside", cliponaxis=False))
         fig.update_xaxes(range=[0, br["재고액(억)"].max() * 1.15])
-        plot_layout(fig, 380, title=dict(text="브랜드별 재고액 (억 원)", font=dict(size=14)))
+        plot_layout(fig, 460, title=dict(text="브랜드별 재고액 (억 원)", font=dict(size=14)))
         fig.update_xaxes(visible=False)
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
     with r:
-        st.dataframe(br, hide_index=True, use_container_width=True, height=248,
-                     column_config={"재고액(억)": st.column_config.NumberColumn(format="%.2f"),
-                                    "당월 매출(만원)": st.column_config.NumberColumn(format="%,d")})
+        st.dataframe(br, hide_index=True, use_container_width=True, height=388,
+                     column_config={"브랜드": st.column_config.TextColumn(width="small"),
+                                    "재고액(억)": st.column_config.NumberColumn(format="%.2f", width="small"),
+                                    "당월 매출(만원)": st.column_config.NumberColumn(format="%,d", width="small"),
+                                    "우선 실행 방향": st.column_config.TextColumn(width="large")})
         if GRD is not None:
             html('<div class="mini">브랜드별 등급 분포 (상품등급 기준)</div>')
             sub = GRD[GRD["브랜드"].isin(br["브랜드"])]
