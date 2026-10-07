@@ -123,6 +123,8 @@ section[data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: 
 .callout .t {{ font-weight: 800; font-size: 18px; }}
 .callout .s {{ color: #BDBDBD; font-size: 13px; }}
 div[data-testid="stMetric"] {{ background: {SOFT}; border-radius: 14px; padding: 14px 18px; }}
+.stDownloadButton button {{ background: {RED}; border: 0; color: #fff; font-weight: 800; border-radius: 14px; padding: 12px 0; }}
+.stDownloadButton button:hover {{ background: #A50D25; color: #fff; }}
 div[data-testid="stMetricValue"] {{ font-weight: 800; font-size: 30px; letter-spacing: -.02em; }}
 </style>
 """, unsafe_allow_html=True)
@@ -141,7 +143,10 @@ def eok(v):
 
 
 def plot_layout(fig, h=360, **kw):
-    fig.update_layout(height=h, margin=dict(l=10, r=10, t=20, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+    top = 56 if "title" in kw else 20
+    if "title" in kw:
+        kw["title"] = {**kw["title"], "x": 0, "xanchor": "left", "y": 0.98, "yanchor": "top", "pad": dict(l=6)}
+    fig.update_layout(height=h, margin=dict(l=10, r=10, t=top, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                       font=dict(family=FONT, size=13, color=INK), showlegend=kw.pop("showlegend", False), **kw)
     fig.update_xaxes(showgrid=False, zeroline=False, linecolor=LINE)
     fig.update_yaxes(showgrid=True, gridcolor="#EAEAEA", zeroline=False)
@@ -212,7 +217,7 @@ with st.sidebar:
     st.image(str(BASE / "assets" / "logo_w.png"), width=170)
     st.markdown("<div style='height:6px'></div><div style='color:#8C8C8C;font-size:12px;letter-spacing:.12em'>2026 Q4 OPERATION PLAN</div>", unsafe_allow_html=True)
     st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
-    page = st.radio("목차", ["표지", "01  EC 목표매출", "02  운영방향 · 상품 등급", "03  채널 운영전략", "04  브랜드 운영전략", "05  체화재고 운영전략"],
+    page = st.radio("목차", ["표지", "01  EC 목표매출", "02  운영방향", "03  채널 운영전략", "04  브랜드 운영전략", "05  체화재고 운영전략"],
                     label_visibility="collapsed")
     st.markdown("<div style='height:22px'></div>", unsafe_allow_html=True)
     with st.expander("기반 자료", expanded=False):
@@ -394,7 +399,7 @@ elif page.startswith("01"):
 elif page.startswith("02"):
     header("02  운영방향", "운영방향", "등급 기반 상품 회전 · 신규 채널 확대 · 폐쇄몰 특가 · 업무 자동화")
     items = [("🏅", "등급 기반 상품 회전 관리", "자체등급 산정 후 상품 회전에 반영<br>B·C 행사·노출 집중 / D·E·F 가격 조정 강화"),
-             ("🏪", "신규 채널 확대", "신규 몰 입점으로 판매 채널 확대<br>등급별 재고의 추가 판로 확보"),
+             ("🏪", "신규 채널 확대", "비즈마켓 · Npay 복지몰 · 해외몰 입점 확대<br>등급별 재고의 추가 판로 확보"),
              ("🎁", "폐쇄몰 공식브랜드 특가운영", "자체 패밀리세일로<br>공식브랜드 특가 운영"),
              ("🤖", "업무 자동화", "반복 업무 자동화로<br>AMD 인력을 MD 업무에 투입")]
     for row in (items[:2], items[2:]):
@@ -443,6 +448,8 @@ elif page.startswith("02"):
             html(f"""<div class="band {'dark' if dark else ''}"><div class="b" style="background:{bc}">{lab}</div>
 <div class="m"><div class="n">{nm}</div><div class="s">{n:,}개 라인 ({lp:.0f}%)<br>매출 {sp:.1f}% · 이익율 {mt}</div></div>
 <div class="a"><div class="x">{act}</div><div class="y">{sub}</div></div></div>""")
+        st.download_button("⬇  상품등급 전체 목록 내려받기 (엑셀)", g_raw, file_name=g_name or "상품등급.xlsx",
+                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", type="primary", use_container_width=True)
 
     html('<div class="sec">등급표 조회</div>')
     f1, f2, f3 = st.columns([2, 3, 3])
@@ -475,8 +482,6 @@ elif page.startswith("02"):
         st.dataframe(view[cols_show].sort_values("매출", ascending=False), hide_index=True, use_container_width=True, height=430,
                      column_config={"이익율(%)": st.column_config.NumberColumn(format="%.1f"), "매출": st.column_config.NumberColumn(format="%,d"),
                                     "평균정산금": st.column_config.NumberColumn(format="%,d")})
-        st.download_button("선택 등급표 내려받기 (CSV)", view[cols_show].to_csv(index=False).encode("utf-8-sig"),
-                           file_name=f"상품등급_{''.join(pick) or '전체'}.csv", mime="text/csv")
 
 elif page.startswith("03"):
     header("03  채널 운영전략", "채널 운영전략", "주요 15개 몰 — 종합몰 · 폐쇄몰 · 패션 플랫폼별 행사일정 · 주력브랜드 정리")
