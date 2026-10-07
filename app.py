@@ -510,17 +510,7 @@ with st.container(key="sec3"):
                     if p:
                         rows.append(dict(몰=m, 행사=ev, 시작=p[0], 종료=p[1], 그룹=gname))
         ev = pd.DataFrame(rows).sort_values(["몰", "시작"])
-        lane_rows = []
-        for m_, grp in ev.groupby("몰", sort=False):
-            ends = []
-            for _, r in grp.iterrows():
-                k = next((i for i, e in enumerate(ends) if e < r["시작"]), None)
-                if k is None:
-                    ends.append(r["종료"]); k = len(ends) - 1
-                else:
-                    ends[k] = r["종료"]
-                lane_rows.append({**r.to_dict(), "y": m_ + " " * k})
-        ev = pd.DataFrame(lane_rows)
+        ev["y"] = ev["몰"]  # 겹치는 행사도 몰별 한 줄에 표시
         order_m = [y for g_ in GROUPS.values() for m in g_[0] for y in sorted(set(ev.loc[ev["몰"] == m, "y"]), key=len)]
         gcol = {"종합몰": INK, "폐쇄몰": MUTED, "패션 플랫폼": RED}
         fig = go.Figure()
