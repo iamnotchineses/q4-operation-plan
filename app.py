@@ -516,7 +516,13 @@ elif page.startswith("03"):
 <div class="done {'dark' if i == 1 else ''}"><div class="h">완료 기준</div>{'<br>'.join('✓ ' + d for d in done)}</div>""")
 
 elif page.startswith("04"):
-    header("04  브랜드 운영전략", "브랜드 운영전략 (재고액순)", "재고액 TOP 10 · 재고액과 당월 매출을 함께 검토해 판매 기회 확보")
+    hl, hr = st.columns([7.5, 2.5], vertical_alignment="center")
+    with hl:
+        header("04  브랜드 운영전략", "브랜드 운영전략 (재고액순)", "재고액 TOP 10 · 재고액과 당월 매출을 함께 검토해 판매 기회 확보")
+    with hr:
+        if b_raw:
+            st.download_button("⬇  전 브랜드 실행방향 (엑셀)", b_raw, file_name=b_name or "브랜드재고.xlsx",
+                               mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", type="primary", use_container_width=True)
     if BRD is None:
         st.warning("브랜드 재고 엑셀이 없습니다. data 폴더에 파일명에 '브랜드'가 들어간 엑셀을 넣어 주세요.")
         st.stop()
