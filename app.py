@@ -430,37 +430,6 @@ elif page.startswith("02"):
         st.download_button("⬇  상품등급 전체 목록 내려받기 (엑셀)", g_raw, file_name=g_name or "상품등급.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", type="primary", use_container_width=True)
 
-    html('<div class="sec">등급표 조회</div>')
-    f1, f2, f3 = st.columns([2, 3, 3])
-    pick = f1.multiselect("등급", order, default=["D", "E", "F"])
-    brands = g[g["등급"].isin(pick)]["브랜드"].value_counts()
-    bpick = f2.multiselect("브랜드", brands.index.tolist(), placeholder="전체 브랜드")
-    q = f3.text_input("라인명 검색", placeholder="예: TMMBP")
-    view = g[g["등급"].isin(pick)]
-    if bpick:
-        view = view[view["브랜드"].isin(bpick)]
-    if q:
-        view = view[view["라인명"].astype(str).str.contains(q, case=False, na=False)]
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("라인 수", f"{len(view):,}개")
-    m2.metric("매출 합계", f"{view['매출'].sum() / 1e8:,.1f}억 원")
-    m3.metric("수량 합계", f"{int(view['수량'].sum()):,}개")
-    m4.metric("이익율 중앙값", f"{view['이익율(%)'].median():.1f}%" if len(view) else "-")
-
-    cA, cB = st.columns([4, 8], gap="medium")
-    with cA:
-        top = view["브랜드"].value_counts().head(12)[::-1]
-        fig = go.Figure(go.Bar(x=top.values, y=top.index, orientation="h", marker_color=RED if set(pick) <= {"D", "E", "F"} else INK,
-                               text=[f"{v:,}" for v in top.values], textposition="outside", cliponaxis=False))
-        fig.update_xaxes(range=[0, (top.max() if len(top) else 1) * 1.18])
-        plot_layout(fig, 430, title=dict(text="선택 등급 라인 수 상위 브랜드", font=dict(size=14)))
-        fig.update_xaxes(visible=False)
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-    with cB:
-        cols_show = [c for c in ["라인명", "브랜드", "등급", "이익율(%)", "수량", "매출", "평균정산금", "건수", "기준기간"] if c in view.columns]
-        st.dataframe(view[cols_show].sort_values("매출", ascending=False), hide_index=True, use_container_width=True, height=430,
-                     column_config={"이익율(%)": st.column_config.NumberColumn(format="%.1f"), "매출": st.column_config.NumberColumn(format="%,d"),
-                                    "평균정산금": st.column_config.NumberColumn(format="%,d")})
 
 elif page.startswith("03"):
     header("03  채널 운영전략", "채널 운영전략", "주요 15개 몰 — 종합몰 · 폐쇄몰 · 패션 플랫폼별 행사일정 · 주력브랜드 정리")
