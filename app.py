@@ -513,44 +513,34 @@ with st.container(key="sec3"):
         ev["y"] = ev["몰"]  # 겹치는 행사도 몰별 한 줄에 표시
         order_m = [y for g_ in GROUPS.values() for m in g_[0] for y in sorted(set(ev.loc[ev["몰"] == m, "y"]), key=len)]
         gcol = {"종합몰": INK, "폐쇄몰": MUTED, "패션 플랫폼": RED}
-        OVER = "#F2A900"  # 행사 겹침 기간
-        PX_DAY = 8.5      # 대략 1일 = 8.5px (라벨이 막대 안에 들어가는지 판단용)
-        def label_px(t):
-            return sum(11.5 if ord(c) > 0x3000 else 7 for c in t) + 10
+        OVER = "#F2A900"  # 실제 기간이 다른 행사와 겹치는 경우 테두리
+        PX_DAY = 8.5      # 대략 1일 = 8.5px → 글자가 다 들어가도록 막대 최소 길이 계산
+        def label_days(t):
+            return (sum(11.5 if ord(c) > 0x3000 else 7 for c in t) + 22) / PX_DAY
         D1 = pd.Timedelta(days=1)
         fig = go.Figure()
         for m_, grp in ev.groupby("몰", sort=False):
             grp = grp.sort_values("시작").reset_index(drop=True)
-            spans = [(pd.Timestamp(r["시작"]), pd.Timestamp(r["종료"]) + D1, r) for _, r in grp.iterrows()]
-            # 1) 행사 막대 (글자 없이)
-            for s0, e0, r in spans:
-                fig.add_trace(go.Bar(base=[s0], x=[(e0 - s0).total_seconds() * 1000], y=[m_], orientation="h",
-                                     marker_color=gcol[r["그룹"]], marker_line_width=0,
+            real = [(pd.Timestamp(r["시작"]), pd.Timestamp(r["종료"]) + D1) for _, r in grp.iterrows()]
+            prev_end = None
+            for i, r in grp.iterrows():
+                s0, e0 = real[i]
+                overlaps = any(k != i and real[k][0] < e0 and s0 < real[k][1] for k in range(len(real)))
+                width = max(e0 - s0, pd.Timedelta(days=label_days(r["행사"])))
+                bs = s0 + (e0 - s0) / 2 - width / 2
+                if prev_end is not None and bs < prev_end + pd.Timedelta(hours=14):
+                    bs = prev_end + pd.Timedelta(hours=14)
+                be = bs + width
+                prev_end = be
+                fig.add_trace(go.Bar(base=[bs], x=[(be - bs).total_seconds() * 1000], y=[m_], orientation="h",
+                                     marker=dict(color=gcol[r["그룹"]], line=dict(color=OVER if overlaps else gcol[r["그룹"]], width=3 if overlaps else 0)),
                                      hovertemplate=f"{m_} · {r['행사']}<br>{r['시작']:%m/%d} ~ {r['종료']:%m/%d}<extra></extra>"))
-            # 2) 겹치는 기간은 다른 색
-            for i in range(len(spans)):
-                for j in range(i + 1, len(spans)):
-                    a, b = max(spans[i][0], spans[j][0]), min(spans[i][1], spans[j][1])
-                    if a < b:
-                        fig.add_trace(go.Bar(base=[a], x=[(b - a).total_seconds() * 1000], y=[m_], orientation="h",
-                                             marker_color=OVER, marker_line_width=0,
-                                             hovertemplate=f"{m_} · 행사 겹침<br>{a:%m/%d} ~ {(b - D1):%m/%d}<extra></extra>"))
-            # 3) 라벨: 겹치지 않는 구간 안에 들어가면 안쪽, 아니면 막대 바깥(빈 쪽)에 표시
-            for i, (s0, e0, r) in enumerate(spans):
-                free_s = max([s0] + [sp[1] for k, sp in enumerate(spans) if k != i and sp[0] <= s0 < sp[1]])
-                free_e = min([e0] + [sp[0] for k, sp in enumerate(spans) if k != i and s0 < sp[0] < e0])
-                txt, need = r["행사"], label_px(r["행사"])
-                if free_e > free_s and (free_e - free_s).days * PX_DAY >= need:
-                    x, anchor, col = free_s + (free_e - free_s) / 2, "center", "#fff"
-                else:
-                    left_free = all(not (sp[0] < s0 <= sp[1]) for k, sp in enumerate(spans) if k != i)
-                    x, anchor, col = (s0 - pd.Timedelta(hours=12), "right", INK) if left_free else (e0 + pd.Timedelta(hours=12), "left", INK)
-                fig.add_annotation(x=x, y=m_, text=txt, showarrow=False, xanchor=anchor, font=dict(color=col, size=12))
+                fig.add_annotation(x=bs + width / 2, y=m_, text=r["행사"], showarrow=False, font=dict(color="#fff", size=12))
         plot_layout(fig, 40 + 29 * len(order_m), barmode="overlay", bargap=0.28)
         fig.update_xaxes(type="date", range=["2026-09-22", "2027-01-05"], dtick="M1", tickformat="%m월", showgrid=True, gridcolor="#EAEAEA", side="top")
         fig.update_yaxes(categoryorder="array", categoryarray=order_m[::-1], showgrid=False)
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-        html('<div class="note">■ 종합몰 · <span style="color:#6E6E6E">■</span> 폐쇄몰 · <span style="color:#C8102E">■</span> 패션 플랫폼 · <span style="color:#F2A900">■</span> 행사 겹침 기간 · 날짜가 정해진 행사만 표시 (상시·월별 행사는 채널 탭 참고)</div>')
+        html('<div class="note">■ 종합몰 · <span style="color:#6E6E6E">■</span> 폐쇄몰 · <span style="color:#C8102E">■</span> 패션 플랫폼 · <span style="color:#F2A900">□</span> 노란 테두리 = 기간이 겹치는 행사 · 막대 길이는 글자에 맞춘 대략적 기간 (정확한 날짜는 마우스 오버) · 날짜가 정해진 행사만 표시 (상시·월별 행사는 채널 탭 참고)</div>')
 
     def mall_cards(gname):
         for m in GROUPS[gname][0]:
