@@ -373,23 +373,6 @@ elif page.startswith("01"):
     plot_layout(fig, 380, barmode="overlay", showlegend=True, legend=dict(orientation="h", y=1.1, x=0))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-    html('<div class="sec">몰별 진행 현황</div>')
-    c1, c2 = st.columns([1, 3])
-    only_main = c1.toggle("주요 15개 몰만", value=True)
-    df = TGT[sel]["malls"].copy()
-    df["4분기 목표"] = df[[f"{m}월_목표" for m in (10, 11, 12)]].sum(axis=1)
-    df["달성률"] = (df["누적"] / df["목표"].where(df["목표"] > 0)).fillna(0) * 100
-    inv = {v: k for k, v in MAIN_MALLS.items()}
-    if only_main:
-        df = df[df["몰"].isin(MAIN_MALLS.values())]
-        df["몰"] = df["몰"].map(inv)
-    df = df[df["목표"] > 0].sort_values("목표", ascending=False)
-    show = pd.DataFrame({"몰": df["몰"], "총 목표(억)": df["목표"] / 1e8, "누적(억)": df["누적"] / 1e8,
-                         "달성률": df["달성률"], "4분기 목표(억)": df["4분기 목표"] / 1e8})
-    st.dataframe(show, hide_index=True, use_container_width=True, height=min(35 * (len(show) + 1) + 3, 640),
-                 column_config={"총 목표(억)": st.column_config.NumberColumn(format="%.1f"), "누적(억)": st.column_config.NumberColumn(format="%.1f"),
-                                "4분기 목표(억)": st.column_config.NumberColumn(format="%.1f"),
-                                "달성률": st.column_config.ProgressColumn(format="%.1f%%", min_value=0, max_value=100)})
     html(f'<div class="note">출처: {t_name} · 누적매출은 파일의 누적매출 열 기준</div>')
 
 elif page.startswith("02"):
