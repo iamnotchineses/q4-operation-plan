@@ -205,6 +205,8 @@ def load_targets(raw: bytes):
                 t, a = ws.cell(rr, c).value, ws.cell(rr, c + 1).value
                 d[f"{m}월_목표"] = t if isinstance(t, (int, float)) else 0
                 d[f"{m}월_실제"] = a if isinstance(a, (int, float)) else None
+            # 누적 = 1~9월 실제매출 합계 (파일 '누적매출' 칸은 10월 초 매출이 일부 포함돼 있어 사용하지 않음)
+            d["누적"] = sum(d.get(f"{m}월_실제") or 0 for m in range(1, 10))
             return d
         total = row_dict(tot)
         malls = []
@@ -430,7 +432,7 @@ with st.container(key="sec1"):
     plot_layout(fig, 300, barmode="overlay", showlegend=True, legend=dict(orientation="h", y=1.1, x=0))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-    html(f'<div class="note">출처: {t_name} · 누적매출은 파일의 누적매출 열 기준</div>')
+    html(f'<div class="note">출처: {t_name} · 누적 매출 = 1~9월 실제매출 합계</div>')
 
 with st.container(key="sec2"):
     html('<div id="sec2" class="anchor"></div>')
