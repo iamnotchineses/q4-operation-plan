@@ -523,7 +523,7 @@ elif page.startswith("04"):
     top = BRD.sort_values("재고액", ascending=False).head(10)
     br = pd.DataFrame({"브랜드": top["브랜드"], "재고액(억)": top["재고액"] / 1e8, "당월 매출(만원)": (top["당월 매출"] / 1e4).round().astype(int),
                        "우선 실행 방향": [BRAND_SHORT.get(b, c) for b, c in zip(top["브랜드"], top["4분기 브랜드 운영 전략 코멘트"])]})
-    l, r = st.columns([5, 7], gap="medium")
+    l, r = st.columns([4, 8], gap="medium")
     with l:
         fig = go.Figure(go.Bar(x=br["재고액(억)"][::-1], y=br["브랜드"][::-1], orientation="h", marker_color=RED,
                                text=[f"{v:.2f}" for v in br["재고액(억)"][::-1]], textposition="outside", cliponaxis=False))
@@ -533,10 +533,10 @@ elif page.startswith("04"):
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
     with r:
         st.dataframe(br, hide_index=True, use_container_width=True, height=388,
-                     column_config={"브랜드": st.column_config.TextColumn(width="small"),
-                                    "재고액(억)": st.column_config.NumberColumn(format="%.2f", width="small"),
-                                    "당월 매출(만원)": st.column_config.NumberColumn(format="%,d", width="small"),
-                                    "우선 실행 방향": st.column_config.TextColumn(width="large")})
+                     column_config={"브랜드": st.column_config.TextColumn(width=130),
+                                    "재고액(억)": st.column_config.NumberColumn(format="%.2f", width=85),
+                                    "당월 매출(만원)": st.column_config.NumberColumn(format="%,d", width=115),
+                                    "우선 실행 방향": st.column_config.TextColumn(width=400)})
         if GRD is not None:
             html('<div class="mini">브랜드별 등급 분포 (상품등급 기준)</div>')
             sub = GRD[GRD["브랜드"].isin(br["브랜드"])]
