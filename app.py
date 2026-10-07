@@ -283,7 +283,7 @@ BRD = pd.read_excel(io.BytesIO(b_raw)) if b_raw else None
 MAIN_MALLS = {  # 표시명: 목표매출 파일 몰명
     "신세계백화점몰": "신세계백화점몰", "신세계몰(SSG)": "신세계몰(신)", "롯데백화점": "롯데백화점온라인몰", "롯데홈쇼핑": "롯데홈쇼핑(신)",
     "현대홈쇼핑": "현대홈쇼핑(3)", "띵샵": "띵샵(신)", "삼성카드": "삼성카드쇼핑", "카카오톡선물하기": "카카오톡선물하기",
-    "롯데쇼핑m몰": "롯데쇼핑(현대M몰)", "포이즌": "POIZON", "무신사": "무신사", "크림": "크림 주식회사", "W컨셉": "Wconcept",
+    "롯데쇼핑m몰": "롯데쇼핑(현대M몰)", "포이즌": "POIZON", "무신사 & 29cm": ["무신사", "29CM(공식)", "29CM"], "크림": "크림 주식회사", "W컨셉": "Wconcept",
     "에이블리": "에이블리", "지그재그": "카카오스타일 (지그재그)",
 }
 CH = {
@@ -309,7 +309,7 @@ CH = {
     "롯데쇼핑m몰": (["라코스테, 구찌·CP컴퍼니·BARBOUR", "AMI·톰브라운·GANNI 등"], ["판매추이에 따른 쿠폰율 조정", "10~12월 비정기 기획전 추진"],
                 [("비정기 기획전", "10~12월")]),
     "포이즌": (["폴로·BARBOUR·캠퍼", "클락스·노다·킨·어그"], ["주력 브랜드 상품 매핑 및 가격 점검", "잔여 부진 재고 소진"], []),
-    "무신사": (["디젤, 티켓투더문", "파슬·아르마니"], ["디젤 익스클루시브 유지 및 무진장 추진", "티켓투더문 물량·노출구좌 확보"], [("무진장", "11월")]),
+    "무신사 & 29cm": (["디젤, 티켓투더문", "파슬·아르마니"], ["디젤 익스클루시브 유지 및 무진장 추진", "티켓투더문 물량·노출구좌 확보"], [("무진장", "11월"), ("이구데이(29cm)", "")]),
     "크림": (["RAB·노다·CEP·씨엘르", "CP컴퍼니·스톤아일랜드·보테가베네타"], ["스포츠 연합전 지속 제안", "인기 브랜드 가격·판매 반응 점검"], [("스포츠 연합전", "상시")]),
     "W컨셉": (["테클라·로이텀", "가니·리던·와일드동키·아페쎄·바버·파라부트", "파슬·비비안웨스트우드·아르마니"],
                 ["리빙 행사 참여 및 연합전 노출", "프리미엄샵·더블유위크 매월 행사 참여", "월 2회 공식브랜드 기획전 진행"],
@@ -324,7 +324,7 @@ CH = {
 GROUPS = {
     "종합몰": (["신세계백화점몰", "신세계몰(SSG)", "롯데백화점", "롯데홈쇼핑", "현대홈쇼핑"], ["쓱세일·쓱데이 등 대형 행사 연계", "FW 의류·잡화 단품 행사"], "🏬"),
     "폐쇄몰": (["띵샵", "삼성카드", "카카오톡선물하기", "롯데쇼핑m몰", "포이즌"], ["카쇼페·슈퍼위크 등 몰 특화 행사", "대물량·고단가 상품 특가", "공식브랜드 패밀리세일 운영"], "🔒"),
-    "패션 플랫폼": (["무신사", "크림", "W컨셉", "에이블리", "지그재그"], ["플랫폼별 대형행사 참여", "수수료·쿠폰 협의로 가격 경쟁력"], "👕"),
+    "패션 플랫폼": (["무신사 & 29cm", "크림", "W컨셉", "에이블리", "지그재그"], ["플랫폼별 대형행사 참여", "수수료·쿠폰 협의로 가격 경쟁력"], "👕"),
 }
 GROUP_NOTES = {"폐쇄몰": "라코스테 가격·쿠폰은 브랜드 정책 확인 후 적용", "패션 플랫폼": "디젤의 타 채널 배정은 익스클루시브 조건 확인 필요"}
 
@@ -345,13 +345,14 @@ def mall_rates(display):
     if TGT is None:
         return ""
     key = MAIN_MALLS.get(display)
+    keys = key if isinstance(key, list) else [key]
     parts = []
     for lab in ("병행", "공식"):
         df = TGT[lab]["malls"]
-        row = df[df["몰"] == key]
-        if len(row) and row.iloc[0]["목표"]:
-            r = row.iloc[0]
-            parts.append(f"{lab} <b>{r['누적'] / r['목표'] * 100:.0f}%</b>")
+        rows = df[df["몰"].isin(keys)]
+        tgt, acc = rows["목표"].sum(), rows["누적"].sum()
+        if tgt:
+            parts.append(f"{lab} <b>{acc / tgt * 100:.0f}%</b>")
     return " · ".join(parts)
 
 
@@ -489,13 +490,13 @@ with st.container(key="sec2"):
 
 with st.container(key="sec3"):
     html('<div id="sec3" class="anchor"></div>')
-    header("03  채널 운영전략", "채널 운영전략", "주요 15개 몰 — 종합몰 · 폐쇄몰 · 패션 플랫폼별 행사일정 · 주력브랜드 정리")
+    header("03  채널 운영전략", "채널 운영전략", "주요 16개 몰 — 종합몰 · 폐쇄몰 · 패션 플랫폼별 행사일정 · 주력브랜드 정리")
     cs = st.columns(3, gap="medium")
     for i, (gname, (malls, focus, ic)) in enumerate(GROUPS.items()):
         dark = True
         with cs[i]:
             html(f"""<div class="card {'dark' if dark else ''}" style="height:284px;display:flex;flex-direction:column;box-sizing:border-box"><div style="display:flex;gap:12px;align-items:center"><div class="dot" style="flex:0 0 46px;height:46px">{ic}</div>
-<div style="font-size:22px;font-weight:800">{gname}</div></div><div class="mini">주요 채널</div><div>{''.join(f'<span class="chip">{m}</span>' for m in malls)}</div>
+<div style="font-size:22px;font-weight:800">{gname}</div></div><div class="mini">주요 채널</div><div>{''.join(f'<span class="chip">{c}</span>' for m in malls for c in m.split(' & '))}</div>
 <div style="margin-top:auto"><div class="mini">4분기 집중 방향</div><div class="foc" style="min-height:66px;font-size:13.5px;line-height:1.65">{'<br>'.join('▪ ' + f for f in focus)}</div></div></div>""")
     st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
 
