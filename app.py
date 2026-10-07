@@ -135,6 +135,8 @@ section[data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: 
 div[data-testid="stMetric"] {{ background: {SOFT}; border-radius: 14px; padding: 14px 18px; }}
 .stDownloadButton button {{ background: {RED}; border: 0; color: #fff; font-weight: 800; border-radius: 14px; padding: 12px 0; }}
 .stDownloadButton button:hover {{ background: #A50D25; color: #fff; }}
+.stLinkButton a {{ background: {INK}; border: 0; color: #fff !important; font-weight: 800; border-radius: 14px; padding: 10px 0; }}
+.stLinkButton a:hover {{ background: #333; color: #fff !important; }}
 div[data-testid="stMetricValue"] {{ font-weight: 800; font-size: 30px; letter-spacing: -.02em; }}
 </style>
 """, unsafe_allow_html=True)
@@ -382,7 +384,7 @@ with st.container(key="sec0"):
             c[i * 2 + 1].metric(f"{lab} 4분기 목표", f"{eok(q4)}억 원")
     html('<div class="sec">목차</div>')
     for n, t, d in [("01", "EC 목표매출", "EC 전체 목표매출 · 공식 목표매출 변경 반영"),
-                    ("02", "운영방향", "등급 기반 상품 회전 · 신규 채널 확대 · 폐쇄몰 특가 · 업무 자동화"),
+                    ("02", "운영방향", "등급 기반 상품 회전 · 폐쇄몰 특가 · 업무 자동화 · 신규 채널 확대"),
                     ("03", "채널 운영전략", "행사일정 · 주력브랜드 정리 — 종합몰 / 폐쇄몰 / 패션 플랫폼"),
                     ("04", "브랜드 운영전략", "재고액순"), ("05", "체화재고 운영전략", "입고일순")]:
         html(f'<div class="agenda"><div class="n">{n}</div><div class="t">{t}</div><div class="d">{d}</div></div>')
@@ -431,11 +433,11 @@ with st.container(key="sec1"):
 
 with st.container(key="sec2"):
     html('<div id="sec2" class="anchor"></div>')
-    header("02  운영방향", "운영방향", "등급 기반 상품 회전 · 신규 채널 확대 · 폐쇄몰 특가 · 업무 자동화")
+    header("02  운영방향", "운영방향", "등급 기반 상품 회전 · 폐쇄몰 특가 · 업무 자동화 · 신규 채널 확대")
     items = [("🏅", "등급 기반 상품 회전 관리", "자체등급 산정 후 상품 회전에 반영<br>B·C 행사·노출 집중 / D·E·F 가격 조정 강화"),
-             ("🏪", "신규 채널 확대", "Npay 복지몰(비즈마켓) · 해외몰 입점 확대<br>등급별 재고의 추가 판로 확보"),
              ("🎁", "폐쇄몰 공식브랜드 특가운영", "자체 패밀리세일로<br>공식브랜드 특가 운영"),
-             ("🤖", "업무 자동화", "반복 업무 자동화로<br>AMD 인력을 MD 업무에 투입")]
+             ("🤖", "업무 자동화", "반복 업무 자동화로<br>AMD 인력을 MD 업무에 투입"),
+             ("🏪", "신규 채널 확대", "Npay 복지몰(비즈마켓) · 해외몰 입점 확대<br>등급별 재고의 추가 판로 확보")]
     cs = st.columns(4, gap="small")
     for n, (c, (ic, t, d)) in enumerate(zip(cs, items), start=1):
         with c:
@@ -463,10 +465,11 @@ with st.container(key="sec2"):
                                text=[f"{int(v):,}" for v in agg["lines"]], textposition="outside",
                                customdata=agg[["share", "margin"]].values,
                                hovertemplate="%{x}등급<br>라인 %{y:,}개<br>매출 비중 %{customdata[0]:.1f}%<br>이익율 중앙값 %{customdata[1]:.1f}%<extra></extra>"))
-        plot_layout(fig, 290, title=dict(text="등급별 라인 수", font=dict(size=15)))
+        plot_layout(fig, 255, title=dict(text="등급별 라인 수", font=dict(size=15)))
         fig.update_yaxes(visible=False)
         fig.update_xaxes(tickfont=dict(size=15))
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        st.link_button("🔎  상품 수익율 검색기 바로가기", "https://search-data-cga2d6ch3cz3rufnlhmsih.streamlit.app/", use_container_width=True)
     with right:
         def band(keys):
             b = agg.loc[keys]
