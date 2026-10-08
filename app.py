@@ -392,13 +392,6 @@ with st.container(key="sec0"):
 <div class="s">e-커머스 운영 · 채널별 판매 확대 및 재고 소진 계획</div>
 </div>""")
     st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
-    if TGT:
-        c = st.columns(4)
-        for i, lab in enumerate(("병행", "공식")):
-            t = TGT[lab]["total"]
-            c[i * 2].metric(f"{lab} 달성률 (9월 누적)", f"{t['누적'] / t['목표'] * 100:.1f}%")
-            q4 = sum(t.get(f"{m}월_목표", 0) for m in (10, 11, 12))
-            c[i * 2 + 1].metric(f"{lab} 4분기 목표", f"{eok(q4)}억 원")
     html('<div class="sec">목차</div>')
     for n, t, d in [("01", "EC 목표매출", "EC 전체 목표매출 · 공식 목표매출 변경 반영"),
                     ("02", "운영방향", "등급 기반 상품 회전 · 폐쇄몰 특가 · 업무 자동화 · 신규 채널 확대"),
@@ -430,7 +423,7 @@ with st.container(key="sec1"):
 <div><div class="l">4분기 목표</div><div class="v r">{eok(q4)}<span>억 원</span></div></div>
 </div></div>""")
 
-    html('<div class="sec">월별 실적 및 4분기 목표</div>')
+    html('<div class="sec">월별 목표 대비 실적</div>')
     sel = st.radio("구분", ["병행", "공식"], horizontal=True, label_visibility="collapsed", key="m_sel")
     t = TGT[sel]["total"]
     ms = list(range(1, 13))
@@ -442,6 +435,7 @@ with st.container(key="sec1"):
                 text=[f"{a:.1f}" if a else "" for a in act], textposition="outside")
     fig.add_bar(x=[f"{m}월" for m in ms], y=[tgt[i] if ms[i] >= 10 else 0 for i in range(12)], name="4분기 목표",
                 marker_color=RED, text=[f"{tgt[i]:.1f}" if ms[i] >= 10 else "" for i in range(12)], textposition="outside")
+    fig.add_scatter(x=[f"{m}월" for m in ms], y=tgt, name="월 목표", mode="lines+markers", line=dict(color=MID, width=2, dash="dot"))
     plot_layout(fig, 300, barmode="overlay", showlegend=True, legend=dict(orientation="h", y=1.1, x=0))
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
