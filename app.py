@@ -223,8 +223,22 @@ def load_targets(raw: bytes):
 @st.cache_data(show_spinner=False)
 def load_grades(raw: bytes):
     df = pd.read_excel(io.BytesIO(raw))
+    df.columns = [str(c).strip() for c in df.columns]
+    if "등급" not in df.columns:
+        blank = [c for c in df.columns if c == "" or c.startswith("Unnamed")]
+        if blank:
+            df = df.rename(columns={blank[0]: "등급"})
     df["등급"] = df["등급"].astype(str).str.strip()
+    if "재고" in df.columns:
+        df = df[pd.to_numeric(df["재고"], errors="coerce").fillna(0) > 0].reset_index(drop=True)
     return df
+
+
+@st.cache_data(show_spinner=False)
+def to_xlsx(df: pd.DataFrame) -> bytes:
+    buf = io.BytesIO()
+    df.to_excel(buf, index=False, sheet_name="상품등급")
+    return buf.getvalue()
 
 
 with st.sidebar:
@@ -456,7 +470,7 @@ with st.container(key="sec2"):
     agg = g.groupby("등급").agg(lines=("라인명", "count"), sales=("매출", "sum"), margin=("이익율(%)", "median")).reindex(order)
     total = int(agg["lines"].sum())
     agg["share"] = agg["sales"] / agg["sales"].sum() * 100
-    html(f'<div class="sub" style="margin-bottom:8px;font-size:13px">상품등급 기준 · {total:,}개 라인 · {g["브랜드"].nunique()}개 브랜드 · S~F 7단계 등급을 상품 회전 전략에 반영</div>')
+    html(f'<div class="sub" style="margin-bottom:8px;font-size:13px">상품등급 10/8 기준 · 재고 보유 {total:,}개 라인 (재고 0 제외) · {g["브랜드"].nunique()}개 브랜드 · S~F 7단계 등급을 상품 회전 전략에 반영</div>')
     html('<div class="steps">' + '<span class="chev">›</span>'.join(
         f'<div class="step {"on" if i == 0 else ""}"><b>0{i + 1}</b>{s}</div>' for i, s in
         enumerate(["상품 등급 산정 (S~F)", "등급별 회전 전략 수립", "행사·노출 / 가격 조정 반영", "판매 결과로 등급 갱신"])) + '</div>')
@@ -486,7 +500,7 @@ with st.container(key="sec2"):
             html(f"""<div class="band {'dark' if dark else ''}"><div class="b" style="background:{bc}">{lab}</div>
 <div class="m"><div class="n">{nm}</div><div class="s">{n:,}개 라인 ({lp:.0f}%)<br>매출 {sp:.1f}% · 이익율 {mt}</div></div>
 <div class="a"><div class="x">{act}</div><div class="y">{sub}</div></div></div>""")
-        st.download_button("⬇  상품등급 전체 목록 내려받기 (엑셀)", g_raw, file_name=g_name or "상품등급.xlsx",
+        st.download_button("⬇  상품등급 전체 목록 내려받기 (엑셀 · 재고 보유)", to_xlsx(GRD), file_name="상품등급_재고보유_1008.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", type="primary", use_container_width=True)
 
 
